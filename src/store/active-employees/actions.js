@@ -35,3 +35,14 @@ export async function getEmployeeProfile(context, payload) {
     context.commit('setSearchStatus', err)
   }
 }
+export async function getDepartment(context, payload) {
+  try {
+    const response = await axios.get('http://localhost:8080/api/get_department')
+    console.log('department: ', response.data)
+    context.commit('setDepartment', response.data)
+    return response.data
+  } catch (err) {
+    console.log(err);
+    context.commit('setSearchStatus', err)
+  }
+}

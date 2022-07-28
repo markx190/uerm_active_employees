@@ -8,6 +8,8 @@ export default function () {
     employeeProfile: {},
     employees: [],
     searchedEmployees: [],
-    resultForStateFilter: []
+    resultForStateFilter: [],
+    department: [],
+    position: []
   }
 }

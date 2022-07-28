@@ -19,3 +19,6 @@ export function searchStatus(state) {
 export function visible(state) {
   return state.visible
 }
+export function department(state) {
+  return state.department
+}

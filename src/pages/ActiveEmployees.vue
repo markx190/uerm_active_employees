@@ -186,8 +186,6 @@ export default defineComponent({
         this.visible = false
       }, 1000)
 
-
-
     },
     filterClass() {
       console.log('class: ', this.employee_class)

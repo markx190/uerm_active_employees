@@ -19,3 +19,6 @@ export function setSearchStatus(state, searchStatus) {
 export function setVisible(state, visible) {
   state.visible = visible
 }
+export function setDepartment(state, department) {
+  state.department = department
+}
