@@ -22,9 +22,7 @@
   <div class="q-ml-lg q-pa-md" v-if="resultEmployees.length >= 1">Filter: <b>{{ resultEmployees.length
   }}</b>
     <q-btn class="q-ml-lg" color="primary" icon-right="archive" label="Export to Excel" no-caps @click="exportTable" />
-
     <div class="q-gutter-md row items-start s-input">
-
       <q-input outlined placeholder="Employee Class" v-model="employee_class" @keyup="filterClass" />
       <q-input outlined placeholder="Department" v-model="department" @keyup="filterDepartment" />
       <q-input outlined placeholder="Position" v-model="employee_position" @keyup="filterPosition" />
@@ -104,7 +102,6 @@ import { defineComponent, ref } from 'vue'
 import { exportFile, useQuasar } from 'quasar'
 import { mapGetters } from 'vuex'
 
-
 export default defineComponent({
   name: 'ActiveEmployees',
   setup() {
@@ -125,7 +122,13 @@ export default defineComponent({
         employee_no: '',
         firstname: '',
         lastname: '',
-        middlename: ''
+        middlename: '',
+        employee_status: '',
+        employee_department: '',
+        gender: '',
+        employee_position: '',
+        employee_class: '',
+        isActive: ''
       },
       campus: [
         '',
@@ -176,7 +179,13 @@ export default defineComponent({
         employee_no: this.search.employee_no,
         firstname: this.search.firstname,
         lastname: this.search.lastname,
-        middlename: this.search.middlename
+        middlename: this.search.middlename,
+        gender: this.search.gender,
+        employee_department: this.search.employee_department,
+        employee_position: this.search.employee_position,
+        employee_status: this.search.employee_status,
+        employee_class: this.search.employee_class,
+        isActive: this.search.isActive
       }
 
       const result = await this.$store.dispatch('activeEmployees/getSearchedEmployees', sData)

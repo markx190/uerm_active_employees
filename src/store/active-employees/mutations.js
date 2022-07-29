@@ -22,3 +22,15 @@ export function setVisible(state, visible) {
 export function setDepartment(state, department) {
   state.department = department
 }
+export function setPositions(state, positions) {
+  state.positions = positions
+}
+export function setEmployeeStatus(state, employeeStatus) {
+  state.employeeStatus = employeeStatus
+}
+export function setEmployeeClass(state, employeeClass) {
+  state.employeeClass = employeeClass
+}
+export function setEmployeeDetails(state, employeeDetails) {
+  state.employeDetails = employeeDetails
+}

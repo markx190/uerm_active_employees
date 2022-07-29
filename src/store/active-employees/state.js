@@ -10,6 +10,9 @@ export default function () {
     searchedEmployees: [],
     resultForStateFilter: [],
     department: [],
-    position: []
+    positions: [],
+    employeeStatus: [],
+    employeeClass: [],
+    employeeDetails: []
   }
 }

@@ -22,3 +22,15 @@ export function visible(state) {
 export function department(state) {
   return state.department
 }
+export function positions(state) {
+  return state.positions
+}
+export function employeeStatus(state) {
+  return state.employeeStatus
+}
+export function employeeClass(state) {
+  return state.employeeClass
+}
+export function employeeDetails(state) {
+  return state.employeeDetails
+}

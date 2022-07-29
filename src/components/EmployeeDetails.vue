@@ -15,9 +15,19 @@
         <q-separator />
         <div class="q-gutter-md row items-start s-input q-ml-sm">
           <q-select outlined v-model="search.gender" :options="employee_gender" label="Gender" hint="Gender" />
-          <q-select outlined v-model="search.department" :options="department" label="Department" hint="Department" />
-          <q-select outlined v-model="search.department" :options="department" label="Position" hint="Position" />
-          <q-option-group v-model="group" :options="empStatus" color="primary" inline />
+          <q-select outlined v-model="search.employee_department" :options="department" class="text-h6"
+            label="Department" hint="Department" />
+          <q-select outlined v-model="search.employee_position" :options="positions" class="text-h6" label="Position"
+            hint="Position" />
+          <q-select outlined v-model="search.employee_status" :options="employeeStatus" class="text-h6" label="Status"
+            hint="Status" />
+          <q-separator />
+          <q-select outlined v-model="search.employee_class" :options="employeeClass" label="Class" hint="Class" />
+          <div class="q-pa-sm">
+            Active Employees
+            <q-option-group name="preferred_genre" v-model="search.isActive" :options="activeEmp" color="primary"
+              inline />
+          </div>
         </div>
         <q-btn class="q-mr-md s-btn" label="Submit" type="submit" color="primary" />
       </q-form>
@@ -62,7 +72,8 @@ export default defineComponent({
       model: ref(null),
       active: ref(true),
       group: ref('op1'),
-      empStatus: [
+      visible: ref(false),
+      activeEmp: [
         {
           label: 'YES',
           value: '1'
@@ -73,7 +84,7 @@ export default defineComponent({
         },
         {
           label: 'Any',
-          value: 'op3'
+          value: ''
         }
       ]
     }
@@ -86,7 +97,13 @@ export default defineComponent({
         employee_no: '',
         firstname: '',
         lastname: '',
-        middlename: ''
+        middlename: '',
+        employee_status: '',
+        employee_department: '',
+        gender: '',
+        employee_position: '',
+        employee_class: '',
+        isActive: ''
       },
       employee_gender: [
         'Any',
@@ -94,16 +111,12 @@ export default defineComponent({
         'FEMALE'
       ],
       filterAlert: false,
-      employee_class: '',
-      employee_position: '',
-      employee_status: '',
       searchStatus: '',
       title: '',
       resultCount: '',
       loading: false,
       columns,
       resultEmployees: [],
-      localFilter: [],
       rows: []
     }
   },
@@ -115,11 +128,16 @@ export default defineComponent({
       searchedEmployees: 'activeEmployees/searchedEmployees',
       resultForStateFilters: 'activeEmployees/resultForStateFilter',
       department: 'activeEmployees/department',
+      positions: 'activeEmployees/positions',
+      employeeStatus: 'activeEmployees/employeeStatus',
+      employeeClass: 'activeEmployees/employeeClass'
     })
-
   },
   created() {
     this.getDepartment()
+    this.getPositions()
+    this.getEmployeeStatus()
+    this.getEmployeeClass()
   },
   mounted() {
     this.getActiveEmployees()
@@ -132,18 +150,34 @@ export default defineComponent({
     },
     async getDepartment() {
       const departmentData = await this.$store.dispatch('activeEmployees/getDepartment')
-      console.log('department: ', departmentData);
+    },
+    async getPositions() {
+      const positionData = await this.$store.dispatch('activeEmployees/getPositions')
+    },
+    async getEmployeeStatus() {
+      const statusData = await this.$store.dispatch('activeEmployees/getEmployeeStatus')
+    },
+    async getEmployeeClass() {
+      const statusData = await this.$store.dispatch('activeEmployees/getEmployeeClass')
+      console.log('employee class: ', this.employeeClass)
     },
     async submitFilter() {
       this.visible = true
       this.resultEmployees = ''
+      console.log('position: ', this.search.employee_class)
       let sData = {
-        employee_type: this.search.employee_type,
         campus: this.search.campus === 'UE Caloocan' ? '0' : this.search.campus === 'UE Manila' ? '1' : '2',
+        employee_type: this.search.employee_type,
         employee_no: this.search.employee_no,
         firstname: this.search.firstname,
         lastname: this.search.lastname,
-        middlename: this.search.middlename
+        middlename: this.search.middlename,
+        gender: this.search.gender,
+        employee_department: this.search.employee_department,
+        employee_position: this.search.employee_position,
+        employee_status: this.search.employee_status,
+        employee_class: this.search.employee_class,
+        isActive: this.search.isActive
       }
 
       const result = await this.$store.dispatch('activeEmployees/getSearchedEmployees', sData)
@@ -153,37 +187,6 @@ export default defineComponent({
         this.visible = false
       }, 1000)
 
-
-
-    },
-    filterClass() {
-      console.log('class: ', this.employee_class)
-      if (this.employee_class === '') {
-        this.resultEmployees = this.searchedEmployees
-      } else {
-        this.resultEmployees = this.resultEmployees.filter(resultEmployee => typeof resultEmployee.EMP_CLASS_DESC === 'string' ? resultEmployee.EMP_CLASS_DESC.toLowerCase().includes(this.employee_class.toLowerCase()) : '')
-      }
-    },
-    filterDepartment() {
-      if (this.department === '') {
-        this.resultEmployees = this.searchedEmployees
-      } else {
-        this.resultEmployees = this.resultEmployees.filter(resultEmployee => typeof resultEmployee.DEPT_DESC === 'string' ? resultEmployee.DEPT_DESC.toLowerCase().includes(this.department.toLowerCase()) : '')
-      }
-    },
-    filterPosition() {
-      if (this.employee_position === '') {
-        this.resultEmployees = this.searchedEmployees
-      } else {
-        this.resultEmployees = this.resultEmployees.filter(resultEmployee => typeof resultEmployee.POS_DESC === 'string' ? resultEmployee.POS_DESC.toLowerCase().includes(this.employee_position.toLowerCase()) : '')
-      }
-    },
-    filterStatus() {
-      if (this.employee_status === '') {
-        this.resultEmployees = this.searchedEmployees
-      } else {
-        this.resultEmployees = this.resultEmployees.filter(resultEmployee => typeof resultEmployee.EMP_STATUS_DESC === 'string' ? resultEmployee.EMP_STATUS_DESC.toLowerCase().includes(this.employee_status.toLowerCase()) : '')
-      }
     },
     wrapCsvValue(val, formatFn, row) {
       let formatted = formatFn !== void 0
@@ -198,7 +201,6 @@ export default defineComponent({
       return `"${formatted}"`
     },
     exportTable() {
-      // naive encoding to csv format
       const content = [columns.map(col => this.wrapCsvValue(col.label))].concat(
         this.searchedEmployees.map(row => columns.map(col => this.wrapCsvValue(
           typeof col.field === 'function'
